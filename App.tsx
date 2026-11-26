@@ -1,59 +1,38 @@
-import React from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { NavigationContainer } from '@react-navigation/native';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
-import TodayScreen from './screens/TodayScreen';
-import HistoryScreen from './screens/HistoryScreen';
-import { colors } from './styles/theme';
-
-const Tab = createBottomTabNavigator();
+import { useFonts } from "expo-font";
+import { StatusBar } from "expo-status-bar";
+import { ActivityIndicator, StyleSheet, View } from "react-native";
+import { Tracker } from "./src/Tracker";
 
 export default function App() {
+  const [ready] = useFonts({
+    Bricolage: require("./assets/fonts/bricolage-600.woff2"),
+    Inter: require("./assets/fonts/inter-400.woff2"),
+    "Inter-Medium": require("./assets/fonts/inter-500.woff2"),
+  });
+
   return (
-    <NavigationContainer>
-      <StatusBar style="auto" />
-      <Tab.Navigator
-        initialRouteName="Today"
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
-
-            if (route.name === 'Today') {
-              iconName = focused ? 'today' : 'today-outline';
-            } else if (route.name === 'History') {
-              iconName = focused ? 'calendar' : 'calendar-outline';
-            }
-
-            return <Ionicons name={iconName} size={size} color={color} />;
-          },
-          tabBarActiveTintColor: colors.primary,
-          tabBarInactiveTintColor: colors.textSecondary,
-          headerShown: true,
-          headerStyle: {
-            backgroundColor: colors.primary,
-          },
-          headerTintColor: colors.card,
-          headerTitleStyle: {
-            fontWeight: 'bold',
-          },
-        })}
-      >
-        <Tab.Screen 
-          name="Today" 
-          component={TodayScreen} 
-          options={{
-            title: "75 Hard - Today"
-          }}
-        />
-        <Tab.Screen 
-          name="History" 
-          component={HistoryScreen}
-          options={{
-            title: "Challenge History"
-          }}
-        />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <View style={styles.stage}>
+      <StatusBar style="dark" />
+      <View style={styles.phone}>
+        {ready ? <Tracker /> : <ActivityIndicator color="#007AFF" style={styles.loading} />}
+      </View>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  stage: {
+    flex: 1,
+    backgroundColor: "#E7EEF8",
+    alignItems: "center",
+  },
+  phone: {
+    flex: 1,
+    width: "100%",
+    maxWidth: 430,
+    backgroundColor: "#FFFFFF",
+  },
+  loading: {
+    marginTop: 120,
+  },
+});
